@@ -1,8 +1,15 @@
 class Timer {
-	constructor( duration, startBtn, stopBtn ) {
+	constructor( duration, startBtn, stopBtn, callbacks ) {
 		this.duration = duration
 		this.startBtn = startBtn
 		this.stopBtn = stopBtn
+		
+		// THIS CALLBACK IS FOR TELLING THE OUTSIDE CLASS THAT TIMER HAS BEEN STARTED AND PAUSED
+		if ( callbacks ) {
+			this.onStart = callbacks.onStart;
+			this.onTick = callbacks.onTick;
+			this.onFinish = callbacks.onfinish;
+		}
 		
 		// add eventListner to these items
 		this.startBtn.addEventListener( 'click' , this.start );
@@ -10,25 +17,30 @@ class Timer {
 	}
 	// these are different function which are gonna perform different task as their name suggest
 	start = () => {
+		if ( this.onStart ) {
+			this.onStart();
+		}
 		this.tick();
-		// MADE THIS LOCAL VARIABLE
 		this.timerId = setInterval( this.tick , 1000 );
 	};
 	
 	stop = () => {
-		console.log("stop!!!")
 		clearInterval( this.timerId );
 	};
 	
-	onClickChange = () => {
-	
-	}
 	// THIS IS RESPONSIBLE FOR UPDATING TIME INSIDE TIMER
 	tick = () => {
-		this.actualTime = this.actualTime - 1;
 		
 		if ( this.actualTime === 0 ) {
 			this.stop();
+			if ( this.onFinish ) {
+				this.onFinish();
+			}
+		} else {
+			this.actualTime = this.actualTime - 1;
+			if ( this.onTick ) {
+				this.onTick();
+			}
 		}
 	};
 	
@@ -49,4 +61,15 @@ const start = document.querySelector("#start_btn")
 const stop = document.querySelector("#stop_btn")
 
 // PASSED OUR ITEM TO OUR CLASS
-const timer = new Timer( duration , start , stop );
+const timer = new Timer( duration , start , stop , {
+	onStart() {
+		console.log( 'onStart' );
+	} ,
+	onTick() {
+		console.log( 'onTick' );
+	} ,
+	onfinish() {
+		console.log( 'onfinish' );
+	} ,
+	
+} );
