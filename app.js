@@ -60,7 +60,7 @@ const duration = document.querySelector("#durarion")
 const start = document.querySelector("#start_btn")
 const stop = document.querySelector("#stop_btn")
 
-// PASSED OUR ITEM TO OUR CLASS
+// PASSED OUR ITEM TO OUR CLASS and CALLBACKS ARE OPTINAL
 const timer = new Timer( duration , start , stop , {
 	onStart() {
 		console.log( 'onStart' );
