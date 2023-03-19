@@ -18,10 +18,11 @@ class Timer {
 	// these are different function which are gonna perform different task as their name suggest
 	start = () => {
 		if ( this.onStart ) {
-			this.onStart();
+			this.onStart(this.timeRemaining = duration.value);
 		}
+		
 		this.tick();
-		this.timerId = setInterval( this.tick , 1000 );
+		this.timerId = setInterval( this.tick , 50 );
 	};
 	
 	stop = () => {
@@ -37,9 +38,10 @@ class Timer {
 				this.onFinish();
 			}
 		} else {
-			this.actualTime = this.actualTime - 1;
+			// TIME REMAINING
+			this.actualTime = this.actualTime - 0.05;
 			if ( this.onTick ) {
-				this.onTick();
+				this.onTick(this.actualTime);
 			}
 		}
 	};
@@ -51,7 +53,7 @@ class Timer {
 	}
 	
 	set actualTime( time ) {
-		return this.duration.value = time;
+		return this.duration.value = time.toFixed(2);
 	}
 }
 
@@ -59,14 +61,26 @@ class Timer {
 const duration = document.querySelector("#durarion")
 const start = document.querySelector("#start_btn")
 const stop = document.querySelector("#stop_btn")
+const circle = document.querySelector( 'circle' );
 
+const perimeter = circle.getAttribute( 'r' ) * 2 * Math.PI;
+
+// SET ATTRIBUTE ON THE GO OF THE PERIMETER
+circle.setAttribute( 'stroke-dasharray' , perimeter );
+
+let timeLeft;
 // PASSED OUR ITEM TO OUR CLASS and CALLBACKS ARE OPTINAL
 const timer = new Timer( duration , start , stop , {
-	onStart() {
-		console.log( 'onStart' );
+	onStart(totalDuraction) {
+		timeLeft = totalDuraction
+		console.log(timeLeft)
 	} ,
-	onTick() {
-		console.log( 'onTick' );
+	onTick(actualTime) {
+		//USED OFFSET PROPERTY TO TICK DOWN THE COUNTER
+		circle.setAttribute( 'stroke-dashoffset' ,
+		  perimeter * actualTime / timeLeft - perimeter
+		);
+		
 	} ,
 	onfinish() {
 		console.log( 'onfinish' );
